@@ -18,8 +18,10 @@ class CoursesListCreateView(APIView):
         serializer = CoursesSerializer(courses, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(request_body=CoursesSerializer)
-
+    @swagger_auto_schema(
+        request_body=CoursesSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def post(self, request):
         serializer = CoursesSerializer(data=request.data)
         if serializer.is_valid():
@@ -30,7 +32,10 @@ class CoursesListCreateView(APIView):
 class CoursesEditView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-    @swagger_auto_schema(request_body=CoursesSerializer)
+    @swagger_auto_schema(
+        request_body=CoursesSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def put(self, request, course_id):
         course = Courses.objects.get(id=course_id)
         serializer = CoursesSerializer(course, data=request.data)
@@ -39,7 +44,10 @@ class CoursesEditView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(request_body=CoursesSerializer)
+    @swagger_auto_schema(
+        request_body=CoursesSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def patch(self, request, course_id):
         course = Courses.objects.get(id=course_id)
         serializer = CoursesSerializer(course, data=request.data, partial=True)
@@ -63,7 +71,10 @@ class ModulListCreateView(APIView):
         serializer = ModulSerializer(moduls, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    @swagger_auto_schema(request_body=ModulSerializer)
+    @swagger_auto_schema(
+        request_body=ModulSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def post(self, request):
         serializer = ModulSerializer(data=request.data)
         if serializer.is_valid():
@@ -74,8 +85,10 @@ class ModulListCreateView(APIView):
 class ModulEditView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-
-    @swagger_auto_schema(request_body=ModulSerializer)
+    @swagger_auto_schema(
+        request_body=ModulSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def put(self, request, modul_id):
         modul = Modul.objects.filter(id=modul_id)
         serializer = ModulSerializer(modul, data=request.data)
@@ -84,7 +97,10 @@ class ModulEditView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    @swagger_auto_schema(request_body=ModulSerializer)
+    @swagger_auto_schema(
+        request_body=ModulSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def patch(self, request, modul_id):
         modul = Modul.objects.filter(id=modul_id)
         serializer = ModulSerializer(modul, data=request.data, partial=True)
@@ -108,7 +124,6 @@ class TaskCreateListView(APIView):
     
     @swagger_auto_schema(
         request_body=TaskSerializer,
-        consumes=['application/x-www-form-urlencoded'], 
         operation_description="Create a task using a form instead of JSON"
     )
     
@@ -122,6 +137,10 @@ class TaskCreateListView(APIView):
 class TaskEditView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
+    @swagger_auto_schema(
+        request_body=TaskSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def put(self, request, task_id):
         taks = Task.objects.filter(id=task_id)
         serializer = TaskSerializer(taks, data=request.data)
@@ -130,6 +149,10 @@ class TaskEditView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    @swagger_auto_schema(
+        request_body=TaskSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
     def patch(self, request, taks_id):
         task = Task.objects.filter(id=taks_id)
         serializer = TaskSerializer(task, data=request.data, partial=True)
@@ -159,7 +182,6 @@ class SubmissionView(APIView):
                 ),
             }
         ),
-        consumes=['application/x-www-form-urlencoded']
     )
     def post(self, request, task_id):
         user_code = request.data.get('code')
