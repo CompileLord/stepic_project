@@ -18,6 +18,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('accounts/', include('accounts.urls')),
+    path('', include('courses.urls')),
+
     # Swagger UI
     re_path(
         r'^swagger/$',
