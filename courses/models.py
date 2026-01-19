@@ -30,6 +30,9 @@ class OutputInput(models.Model):
     input = models.TextField()
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='output_inputs')
 
+
+
+
 class Submission(models.Model):
     class IsCorrect(models.TextChoices):
         CORRECT = 'Correct'

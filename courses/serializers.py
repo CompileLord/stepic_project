@@ -23,7 +23,7 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = ['id', 'text', 'modul', 'created_at']
 
 
-class OutputInput(serializers.ModelSerializer):
+class OutputInputSerializer(serializers.ModelSerializer):
     class Meta:
         model = OutputInput
         fields = ['id', 'output', 'input', 'task']

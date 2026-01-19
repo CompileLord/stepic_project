@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .helpers import check_and_run_command
 from .models import Courses, Modul, Task, OutputInput, Submission
-from .serializers import CoursesSerializer, ModulSerializer, TaskSerializer
+from .serializers import CoursesSerializer, ModulSerializer, TaskSerializer, OutputInputSerializer
 
 
 
@@ -102,7 +102,7 @@ class ModulEditView(APIView):
         operation_description="Create a task using a form instead of JSON"
     )
     def patch(self, request, modul_id):
-        modul = Modul.objects.filter(id=modul_id)
+        modul = Modul.objects.get(id=modul_id)
         serializer = ModulSerializer(modul, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -142,7 +142,7 @@ class TaskEditView(APIView):
         operation_description="Create a task using a form instead of JSON"
     )
     def put(self, request, task_id):
-        taks = Task.objects.filter(id=task_id)
+        taks = Task.objects.get(id=task_id)
         serializer = TaskSerializer(taks, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -153,18 +153,79 @@ class TaskEditView(APIView):
         request_body=TaskSerializer,
         operation_description="Create a task using a form instead of JSON"
     )
-    def patch(self, request, taks_id):
-        task = Task.objects.filter(id=taks_id)
+    def patch(self, request, task_id):
+        task = Task.objects.filter(id=task_id)
         serializer = TaskSerializer(task, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
     
-    def delete(self, request, taks_id):
-        task = Task.objects.filter(id=taks_id)
+    def delete(self, request, task_id):
+        task = Task.objects.filter(id=task_id)
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+class OutputInputListCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=OutputInputSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
+    
+    def post(self, request):
+        serializer = OutputInputSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    def get(self, request):
+        all_data = OutputInput.objects.all()
+        serializer = OutputInputSerializer(all_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class OutputInputEditView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    @swagger_auto_schema(
+        request_body=OutputInputSerializer,
+        operation_description="Create a task using a form instead of JSON"
+    )
+    def put(self, request, output_id):
+        try:
+            item = OutputInput.objects.get(id=output_id)
+        except OutputInput.DoesNotExist:
+            return Response({"error": "Not found"}, status=404)
+            
+        serializer = OutputInputSerializer(item, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, task_id):
+        try:
+            task = Task.objects.get(id=task_id) # Используем .get()
+        except Task.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+            
+        serializer = TaskSerializer(task, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, task_id):
+        task = Task.objects.filter(id=task_id)
+        if not task.exists():
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 
 
 class SubmissionView(APIView):
